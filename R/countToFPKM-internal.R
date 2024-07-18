@@ -70,13 +70,17 @@ fpkm <- function(counts, featureLength, meanFragmentLength) {
   # filter features
   idx <- apply(effLen, 1, function(x) min(x) > 1)
   counts_filtered <- counts[idx,]
+  counts_filtered_matr <- matrix(counts_filtered)
+  rownames(counts_filtered_matr) <- names(counts_filtered)
+               
   effLen <- effLen[idx,]
+  effLen_matr <- matrix(effLen)
   featureLength <- featureLength[idx]
   
   # Process one column at a time for fpkm calculation
-  fpkm <- do.call(cbind, lapply(1:ncol(counts_filtered), function(i) {
-    N <- sum(counts_filtered[,i])
-    exp( log(counts_filtered[,i]) + log(1e9) - log(effLen[,i]) - log(N) )
+  fpkm <- do.call(cbind, lapply(1:ncol(counts_filtered_matr), function(i) {
+    N <- sum(counts_filtered_matr[,i])
+    exp( log(counts_filtered_matr[,i]) + log(1e9) - log(effLen_matr[,i]) - log(N) )
   }))
    
   # Copy the row and column names from the original matrix.
